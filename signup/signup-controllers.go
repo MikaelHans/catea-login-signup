@@ -14,7 +14,16 @@ func SignUp(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	//INSERT MEMBER TO DATABASE
+	//ENCRYPT MEMBER PASSWORD//////////////////////////////////////////////////
+	encrypted_pass, err := util.EncryptString(data.Pass)
+	if err != nil{
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	data.Pass = encrypted_pass
+	//INSERT MEMBER TO DATABASE//////////////////////////////////////////////////
 	rows, err := InsertIntoMember(data)
 	if err != nil {
 		c.JSON(400, gin.H{

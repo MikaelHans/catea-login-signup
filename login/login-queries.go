@@ -11,11 +11,11 @@ func GetMemberWithLoginInfo(logininfo util.LoginInfo) (*sql.Rows, error) {
 		return nil, err
 	}
 
-	var query string = `SELECT *
+	var query string = `SELECT email, password,first_name,last_name,member_since
 	FROM catea_member
-	WHERE email = $1 AND password = $2`
+	WHERE email = $1`
 
-	rows, err := db.Query(query, logininfo.Email, logininfo.Pass)
+	rows, err := db.Query(query, logininfo.Email)
 	db.Close()
 	return rows, err
 }

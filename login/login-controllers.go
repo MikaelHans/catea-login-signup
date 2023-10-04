@@ -1,7 +1,9 @@
 package login
 
 import (
+	"fmt"
 	"net/http"
+
 
 	"github.com/MikaelHans/catea/login-signup/util"
 	"github.com/gin-gonic/gin"
@@ -28,20 +30,29 @@ func Login(c *gin.Context) {
 	*/
 	var i int
 	var member_data util.Member;
+
 	for rows.Next(){
-		rows.Scan(&member_data)
+		fmt.Print(rows.Scan(
+			&member_data.Email,
+			&member_data.Pass,
+			&member_data.Firstname,
+			&member_data.Lastname,
+			&member_data.Member_Since))		
 		i++
 	}
-	if i < 0{
+	//VERIFY PASS /////////////////////////////////////////////////////////////////////////////////////////////////
+	err = util.DecryptString(member_data.Pass, logininfo.Pass)
+	//RETURN 401 CREDENTIALS ARE WRONG ///////////////////////////////////////////////////////////////////////////
+	if i < 0 || err != nil{
 		responseData := map[string]interface{}{
             "msg": "Email or pass is incorrect",
         }
-		c.JSON(http.StatusBadRequest, responseData)
+		c.JSON(http.StatusUnauthorized, responseData)
 		return
 	}
 	/*WHEN SUCCESS RETURN TOKEN AND MSG:SUCCESS*/
 	token, err := util.GenerateJWT(member_data.Email)
-	
+
 	/*GENERATE JWT ERROR HANDLER*/
 	if err != nil{
 		responseData := map[string]interface{}{

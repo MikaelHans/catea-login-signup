@@ -5,6 +5,7 @@ type Member struct {
 	Pass      string `json:"Pass"`
 	Firstname string `json:"Firstname"`
 	Lastname  string `json:"Lastname"`
+	Member_Since string
 }
 
 type LoginInfo struct {
